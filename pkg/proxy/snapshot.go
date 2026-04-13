@@ -56,7 +56,13 @@ func (ops V1DataEngineProxyOps) VolumeSnapshot(ctx context.Context, req *rpc.Eng
 		}
 	}()
 
-	recv, err := c.VolumeSnapshot(req.SnapshotVolume.Name, req.SnapshotVolume.Labels, req.SnapshotVolume.FreezeFilesystem)
+	userCreated := true
+	if req.SnapshotVolume.UserCreated != nil {
+		userCreated = req.SnapshotVolume.GetUserCreated()
+	}
+
+	recv, err := c.VolumeSnapshotWithUserCreated(req.SnapshotVolume.Name, req.SnapshotVolume.Labels,
+		req.SnapshotVolume.FreezeFilesystem, userCreated)
 	if err != nil {
 		return nil, err
 	}
